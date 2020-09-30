@@ -1,4 +1,4 @@
-# Kubernetes
+<h1 align="center">Kubernetes</h1>
 
 ## Commands
 
@@ -110,6 +110,12 @@ kubectl drain node <node-name> --grace-period=<seconds> --ignore-daemonsets=true
 
 ```bash
 kubectl label node <node-name> <label-key>=<label-value>
+```
+
+- Create docker-hub secret
+
+```bash
+kubectl create secret docker-registry docker-hub --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
 ```
 
 **Note**:  You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
