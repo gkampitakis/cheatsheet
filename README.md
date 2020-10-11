@@ -2,7 +2,9 @@
 <div align="center">
 A repository where I have gathered useful commands, shortcuts I use on my day to day work.
 </div>
+<br>
 
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/gkampitakis/cheatsheet/graphs/commit-activity)
 
 ## Contents
 

@@ -103,7 +103,8 @@ kubectl uncordon <node-name>
 - Drain node
 
 ```bash
-kubectl drain node <node-name> --grace-period=<seconds> --ignore-daemonsets=true
+kubectl drain <node-name> --grace-period=<seconds> --ignore-daemonsets=true
+# You can set a --pod-selector to point to a specific pod by label
 ``` 
 
 - Label Node
@@ -117,5 +118,20 @@ kubectl label node <node-name> <label-key>=<label-value>
 ```bash
 kubectl create secret docker-registry docker-hub --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
 ```
+- Get all pods in a specific node
+
+```bash
+kubectl get pods --all-namespaces  --field-selector spec.nodeName=<node-name>
+```
+
+- Node taints
+
+```bash
+# Set node taint
+kubectl taint nodes node1 key=value:NoSchedule
+# and remove 
+kubectl taint nodes node1 key=value:NoSchedule-
+```
+The taint has key `key`, value `value`, and taint effect can be `NoSchedule`, `NoExecute` or `PreferNoSchedule`.
 
 **Note**:  You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
