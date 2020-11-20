@@ -33,3 +33,20 @@ docker exec -it <container id> sh
 ```bash
 docker-compose stop/run/build <service name>
 ```
+
+- Get number of CPUs
+
+```bash
+docker info | grep CPUs
+```
+
+- Display a live stream of container(s) resource usage statistics
+```bash 
+docker stats [OPTIONS] [CONTAINER...]
+```
+
+- Connect to container from `docker-compose`
+
+```bash
+docker-compose exec <service-name> sh
+```

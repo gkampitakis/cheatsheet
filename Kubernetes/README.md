@@ -134,4 +134,36 @@ kubectl taint nodes node1 key=value:NoSchedule-
 ```
 The taint has key `key`, value `value`, and taint effect can be `NoSchedule`, `NoExecute` or `PreferNoSchedule`.
 
+- Kubectl Configuration File
+
+```bash
+kubectl config view
+```
+
+### Access the API server
+
+- Kubectl get API token 
+
+```bash
+export TOKEN=$(kubectl describe secret -n kube-system $(kubectl get secrets -n kube-system | grep default | cut -f1 -d ' ') | grep -E '^token' | cut -f2 -d':' | tr -d '\t' | tr -d " ")
+```
+
+- Get the API server endpoint
+
+```bash
+export APISERVER=$(kubectl config view | grep https | cut -f 2- -d ":" | tr -d " ")
+```
+
+Finally you can reach the API server using `curl`
+
+```bash
+curl $APISERVER --header "Authorization: Bearer $TOKEN" --insecure
+```
+
+Also you can use the client certificate, client keym and certificate authority data from the `.kube/config` file. You need to extract them and then encode them.
+
+```bash 
+curl $APISERVER --cert encoded-cert --key encoded-key --cacert encoded-ca
+```
+
 **Note**:  You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
