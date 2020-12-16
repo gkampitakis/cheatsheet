@@ -166,4 +166,10 @@ Also you can use the client certificate, client keym and certificate authority d
 curl $APISERVER --cert encoded-cert --key encoded-key --cacert encoded-ca
 ```
 
+### Get All Pods filtered by status
+
+```bash
+kubectl get po --field-selector status.phase=<Pending | Running>   --all-namespaces
+```
+
 **Note**:  You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)

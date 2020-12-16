@@ -50,3 +50,5 @@ docker stats [OPTIONS] [CONTAINER...]
 ```bash
 docker-compose exec <service-name> sh
 ```
+
+[Prune unused Docker Objects](https://docs.docker.com/config/pruning/)
