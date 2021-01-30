@@ -2,8 +2,8 @@
 
 ## Commands
 
-- Port forward into pod/svc 
- 
+- Port forward into pod/svc
+
 Useful for when you want to have access to a pod locally.
 
 ```bash
@@ -48,9 +48,9 @@ kubectl config get-context
 kubectl  scale --replicas=5  deployment/<deployment-name> -n  <namespace>
 ```
 
-- Deployment  operations
+- Deployment operations
 
-```bash 
+```bash
 # Watch update status for deployment
 kubectl rollout status deploy/<deployment>
 
@@ -73,24 +73,24 @@ kubectl get <deployment/ingress/hpa etc> --all-namespaces
 
 - Get metrics for a pod from metrics-server
 
-```bash 
+```bash
 kubectl get --raw /apis/metrics.k8s.io/v1beta1/<namespace>/default/pods/<pod-name> | jq
 
 #or
 
-kubeclt top pod <pod-name> -n namespace 
+kubeclt top pod <pod-name> -n namespace
 ```
 
 - Get all images from all running pods
 
-```bash 
+```bash
 kubectl get pods --all-namespaces -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{range .spec.containers[*]}{.image}{", "}{end}{end}' |\
 sort
 ```
 
 - Get all nodes by selector
 
-```bash 
+```bash
 kubectl get nodes --selector='<label-key>=<label-value>'
 ```
 
@@ -105,7 +105,7 @@ kubectl uncordon <node-name>
 ```bash
 kubectl drain <node-name> --grace-period=<seconds> --ignore-daemonsets=true
 # You can set a --pod-selector to point to a specific pod by label
-``` 
+```
 
 - Label Node
 
@@ -118,6 +118,7 @@ kubectl label node <node-name> <label-key>=<label-value>
 ```bash
 kubectl create secret docker-registry docker-hub --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
 ```
+
 - Get all pods in a specific node
 
 ```bash
@@ -129,9 +130,10 @@ kubectl get pods --all-namespaces  --field-selector spec.nodeName=<node-name>
 ```bash
 # Set node taint
 kubectl taint nodes node1 key=value:NoSchedule
-# and remove 
+# and remove
 kubectl taint nodes node1 key=value:NoSchedule-
 ```
+
 The taint has key `key`, value `value`, and taint effect can be `NoSchedule`, `NoExecute` or `PreferNoSchedule`.
 
 - Kubectl Configuration File
@@ -142,7 +144,7 @@ kubectl config view
 
 ### Access the API server
 
-- Kubectl get API token 
+- Kubectl get API token
 
 ```bash
 export TOKEN=$(kubectl describe secret -n kube-system $(kubectl get secrets -n kube-system | grep default | cut -f1 -d ' ') | grep -E '^token' | cut -f2 -d':' | tr -d '\t' | tr -d " ")
@@ -162,7 +164,7 @@ curl $APISERVER --header "Authorization: Bearer $TOKEN" --insecure
 
 Also you can use the client certificate, client keym and certificate authority data from the `.kube/config` file. You need to extract them and then encode them.
 
-```bash 
+```bash
 curl $APISERVER --cert encoded-cert --key encoded-key --cacert encoded-ca
 ```
 
@@ -172,4 +174,11 @@ curl $APISERVER --cert encoded-cert --key encoded-key --cacert encoded-ca
 kubectl get po --field-selector status.phase=<Pending | Running>   --all-namespaces
 ```
 
-**Note**:  You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+### Doing a request from one pod do another
+
+```bash
+# You can do curl in the url 
+curl http://<service-name>.<namespace>
+```
+
+**Note**: You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
