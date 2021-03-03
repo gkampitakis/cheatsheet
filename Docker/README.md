@@ -51,4 +51,22 @@ docker stats [OPTIONS] [CONTAINER...]
 docker-compose exec <service-name> sh
 ```
 
+- List all container's ids
+
+```bash
+docker ps -aq
+```
+
+- Remove all containers
+
+```bash
+docker rm $(docker ps -aq)
+```
+
+- Stop all containers
+
+```bash
+docker stop $(docker ps -aq)
+```
+
 [Prune unused Docker Objects](https://docs.docker.com/config/pruning/)
