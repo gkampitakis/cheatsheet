@@ -69,4 +69,13 @@ docker rm $(docker ps -aq)
 docker stop $(docker ps -aq)
 ```
 
+- Build image with a mounted a secret
+
+```bash
+docker build--secret id=mysecret,src=mysecret.txt .
+
+# Then inside the image you have 
+# RUN --mount=type=secret,id=mysecret cat /run/secrets/mysecret
+```
+
 [Prune unused Docker Objects](https://docs.docker.com/config/pruning/)

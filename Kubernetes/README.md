@@ -177,8 +177,14 @@ kubectl get po --field-selector status.phase=<Pending | Running>   --all-namespa
 ### Doing a request from one pod do another
 
 ```bash
-# You can do curl in the url 
+# You can do curl in the url
 curl http://<service-name>.<namespace>
+```
+
+### Copy a secret from one namespace to another
+
+```
+ kubectl get secret <secret-name> --namespace <source-namespace>  -o yaml | grep -v '^\s*namespace:\s' |  kubectl apply --namespace=<destination-namespace> -f -
 ```
 
 **Note**: You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
