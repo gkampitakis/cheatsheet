@@ -78,4 +78,10 @@ docker build--secret id=mysecret,src=mysecret.txt .
 # RUN --mount=type=secret,id=mysecret cat /run/secrets/mysecret
 ```
 
+- Override entry point of image
+
+```bash
+docker run -it --entrypoint <command> <image>
+```
+
 [Prune unused Docker Objects](https://docs.docker.com/config/pruning/)
