@@ -168,6 +168,12 @@ Also you can use the client certificate, client keym and certificate authority d
 curl $APISERVER --cert encoded-cert --key encoded-key --cacert encoded-ca
 ```
 
+### Delete all `Completed` pods in a namespace
+
+```bash
+kubectl get po --field-selector status.phase=Succeeded --no-headers -n <namespace> | awk '{print $1}'  | xargs kubectl delete po -n <namespace>
+```
+
 ### Get All Pods filtered by status
 
 ```bash
