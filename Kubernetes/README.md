@@ -193,4 +193,10 @@ curl http://<service-name>.<namespace>
  kubectl get secret <secret-name> --namespace <source-namespace>  -o yaml | grep -v '^\s*namespace:\s' |  kubectl apply --namespace=<destination-namespace> -f -
 ```
 
+### Start pod from an image
+
+```bash
+kubectl run <pod-name> --image=<image-name> --restart=Never
+```
+
 **Note**: You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
