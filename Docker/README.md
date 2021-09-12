@@ -41,7 +41,8 @@ docker info | grep CPUs
 ```
 
 - Display a live stream of container(s) resource usage statistics
-```bash 
+
+```bash
 docker stats [OPTIONS] [CONTAINER...]
 ```
 
@@ -74,7 +75,7 @@ docker stop $(docker ps -aq)
 ```bash
 docker build--secret id=mysecret,src=mysecret.txt .
 
-# Then inside the image you have 
+# Then inside the image you have
 # RUN --mount=type=secret,id=mysecret cat /run/secrets/mysecret
 ```
 
@@ -82,6 +83,12 @@ docker build--secret id=mysecret,src=mysecret.txt .
 
 ```bash
 docker run -it --entrypoint <command> <image>
+```
+
+- Start container and attach file from host machine
+
+```bash
+docker run -d --rm -v $PWD/<fileName>:/path/inside/container/<fileName> --name=<containerName> <image>
 ```
 
 [Prune unused Docker Objects](https://docs.docker.com/config/pruning/)
