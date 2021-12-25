@@ -199,4 +199,22 @@ curl http://<service-name>.<namespace>
 kubectl run <pod-name> --image=<image-name> --restart=Never
 ```
 
+### Get a pod by selector
+
+```bash
+# --selector=app=my-app
+kubectl get pod --selector=<selector>
+```
+
+### Get image from deployment/pod
+
+```bash
+# Deployment
+kubectl get deployment <deployment-name> --jsonpath='{.spec.template.spec.containers[*].image}'
+# Pod
+kubectl get po --selector=app=<app-name> -o jsonpath='{.items[*].spec.containers[*].image}'
+# or 
+kubectl get po <pod-name> -o jsonpath='{.items[*].spec.containers[*].image}'
+```
+
 **Note**: You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)

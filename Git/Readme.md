@@ -6,3 +6,11 @@
 ```bash
 git remote update origin --prune
 ```
+
+- Delete tag from local and origin
+
+```bash
+git tag -d <tag-name>
+
+git push --delete origin <tag-name>
+```
