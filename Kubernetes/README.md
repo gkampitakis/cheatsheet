@@ -1,131 +1,161 @@
 <h1 align="center">Kubernetes</h1>
 
+## Contents
+
+- [Deployments](#deployments)
+  - Restart
+  - Scale
+  - Rollback
+  - Pause/Resume
+  - Watch update status 
+- [Pods](#pods)
+  - Port forward into pod/svc
+  - Get all pods in a node
+  - Get all pods by status
+  - Get all images from all running pods
+  - Delete all `Completed` pods in a namespace
+  - Get metrics for a pod from metrics-server
+  - Start pod from an image
+  - Get pod by selector
+- [Nodes](#nodes)
+  - Get all
+  - Drain
+  - Uncordon
+  - Label
+  - Add/Remove taint
+- [Misc](#misc)
+  - Copy file from your machine inside a pod
+  - Create docker-hub secret
+  - Copy secret from one namespace to another
+  - List all events ordered
+  - Do request from one pod do another
+  - Set Current Context
+  - Get Current Context
+  - List resources
+
+- [Useful Tools](#useful-tools)
+
 ## Commands
 
-- Port forward into pod/svc
+### Deployments
+#### Restart
+
+```bash
+kubectl rollout restart deployment <deployment> # -n <namespace>
+```
+
+#### Scale
+
+```bash
+kubectl scale deployment/<deployment> --replicas=<number> # -n <namespace>
+```
+
+#### Rollback
+
+```bash
+kubectl rollout undo deploy <deployment> # --to-revision=1 -n <namespace>
+```
+
+#### Pause/Resume
+
+```bash
+kubectl rollout pause/resume deploy <deployment> # -n <namespace>
+```
+
+#### Watch update status
+
+```bash
+kubectl rollout status deploy <deployment> # -n <namespace>
+```
+
+### Pods
+
+#### Port forward into pod/svc
 
 Useful for when you want to have access to a pod locally.
 
 ```bash
-kubectl port-forward <pod-name> -n <namespace> <host-port>:<pod-port>
+kubectl port-forward <pod> <host-port>:<pod-port> # -n <namespace>
 
-# You can portforward to a service as well
-
-kubectl port-forward service/<service-name> -n <namespace> <host-port>:<pod-port>
+kubectl port-forward service/<service> <host-port>:<pod-port> # -n <namespace>
 ```
 
-- Copy a file from your machine inside a pod
-
-For more details you can also check `kubectl cp --help`.
+#### Get all pods in a node
 
 ```bash
-tar cf - package.json | kubectl exec -i <pod-name> -- tar xf - -C /path/inside/pod
+kubectl get pods --field-selector spec.nodeName=<node> # -A / -n <namespace>
 ```
 
-- Restart a deployment
+#### Get all pods by status
 
 ```bash
-kubectl -n <namespace> rollout restart deployment <name>
+kubectl get po --field-selector status.phase=<Pending | Running> # -A / -n <namespace>
 ```
 
-- Set Current Context (e.g namespace)
-
-For managing different contexts you can also have a look at [kubectx](https://github.com/ahmetb/kubectx).
-
-```bash
-kubectl config set-context --current --namespace <namespace>
-```
-
-- Get Current Context
-
-```bash
-kubectl config get-context
-```
-
-- Scale a deployment
-
-```bash
-kubectl  scale --replicas=5  deployment/<deployment-name> -n  <namespace>
-```
-
-- Deployment operations
-
-```bash
-# Watch update status for deployment
-kubectl rollout status deploy/<deployment>
-
-# Pause/resume deployment
-kubectl rollout pause/resume deploy<deployment>
-
-# Rollback to revision
-kubectl rollout undo deploy<deployment> (optional) --to-revision=1
-```
-
-- List resources
-
-```bash
-# List all resources in a namespace
-kubectl get all -n <namespace>
-
-#List a resource in all namespaces
-kubectl get <deployment/ingress/hpa etc> --all-namespaces
-```
-
-- Get metrics for a pod from metrics-server
-
-```bash
-kubectl get --raw /apis/metrics.k8s.io/v1beta1/<namespace>/default/pods/<pod-name> | jq
-
-#or
-
-kubeclt top pod <pod-name> -n namespace
-```
-
-- Get all images from all running pods
+#### Get all images from all running pods
 
 ```bash
 kubectl get pods --all-namespaces -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{range .spec.containers[*]}{.image}{", "}{end}{end}' |\
 sort
 ```
 
-- Get all nodes by selector
+#### Delete all `Completed` pods in a namespace
 
 ```bash
-kubectl get nodes --selector='<label-key>=<label-value>'
+kubectl get po --field-selector status.phase=Succeeded --no-headers -n <namespace> | awk '{print $1}'  | xargs kubectl delete po -n <namespace>
 ```
 
-- Uncordon Node ( set is again as schedulable usually after draining)
+#### Get metrics for a pod from metrics-server
 
 ```bash
-kubectl uncordon <node-name>
+kubectl get --raw /apis/metrics.k8s.io/v1beta1/<namespace>/default/pods/<pod> | jq
+
+#or
+
+kubectl top pod <pod> # -n <namespace>
 ```
 
-- Drain node
+#### Start pod from an image
 
 ```bash
-kubectl drain <node-name> --grace-period=<seconds> --ignore-daemonsets=true
+kubectl run <pod> --image=<image> --restart=Never
+```
+
+#### Get a pod by selector
+
+```bash
+# e.g. --selector=app=my-app
+kubectl get pod --selector=<selector>
+```
+
+### Nodes
+
+#### Get all
+
+```bash
+kubectl get nodes # --selector='<key>=<value>'
+```
+
+#### Drain
+
+```bash
+kubectl drain <node> --grace-period=<seconds> --ignore-daemonsets=true
 # You can set a --pod-selector to point to a specific pod by label
 ```
 
-- Label Node
+#### Uncordon
 
 ```bash
-kubectl label node <node-name> <label-key>=<label-value>
+kubectl uncordon <node>
 ```
 
-- Create docker-hub secret
+#### Label
 
 ```bash
-kubectl create secret docker-registry docker-hub --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
+kubectl label node <node> <key>=<value>
 ```
 
-- Get all pods in a specific node
-
-```bash
-kubectl get pods --all-namespaces  --field-selector spec.nodeName=<node-name>
-```
-
-- Node taints
+#### Add/Remove taint
 
 ```bash
 # Set node taint
@@ -136,85 +166,83 @@ kubectl taint nodes node1 key=value:NoSchedule-
 
 The taint has key `key`, value `value`, and taint effect can be `NoSchedule`, `NoExecute` or `PreferNoSchedule`.
 
-- Kubectl Configuration File
+### Misc
+
+#### Copy a file from your machine inside a pod
+
+For more details you can also check `kubectl cp --help`.
 
 ```bash
-kubectl config view
+tar cf - package.json | kubectl exec -i <pod> -- tar xf - -C /path/inside/pod
 ```
 
-### Access the API server
-
-- Kubectl get API token
+#### Create docker-hub secret
 
 ```bash
-export TOKEN=$(kubectl describe secret -n kube-system $(kubectl get secrets -n kube-system | grep default | cut -f1 -d ' ') | grep -E '^token' | cut -f2 -d':' | tr -d '\t' | tr -d " ")
+kubectl create secret docker-registry docker-hub --docker-server=<your-registry-server> --docker-username=<your-name> --docker-password=<your-pword> --docker-email=<your-email>
 ```
 
-- Get the API server endpoint
+#### Copy a secret from one namespace to another
 
 ```bash
-export APISERVER=$(kubectl config view | grep https | cut -f 2- -d ":" | tr -d " ")
+kubectl get secret <secret-name> --namespace <source-namespace>  -o yaml | grep -v '^\s*namespace:\s' |  kubectl apply --namespace=<destination-namespace> -f -
 ```
 
-Finally you can reach the API server using `curl`
+#### List all events ordered
 
 ```bash
-curl $APISERVER --header "Authorization: Bearer $TOKEN" --insecure
+kubectl get events --sort-by=.metadata.creationTimestamp # -n <namespace>
 ```
 
-Also you can use the client certificate, client keym and certificate authority data from the `.kube/config` file. You need to extract them and then encode them.
+#### Do request from one pod do another
 
 ```bash
-curl $APISERVER --cert encoded-cert --key encoded-key --cacert encoded-ca
+curl http://<service>.<namespace>
 ```
 
-### Delete all `Completed` pods in a namespace
+#### Set Current Context
+
+For managing different contexts you can also have a look at [kubectx](https://github.com/ahmetb/kubectx).
 
 ```bash
-kubectl get po --field-selector status.phase=Succeeded --no-headers -n <namespace> | awk '{print $1}'  | xargs kubectl delete po -n <namespace>
+kubectl config set-context --current # -n <namespace>
 ```
 
-### Get All Pods filtered by status
+#### Get Current Context
 
 ```bash
-kubectl get po --field-selector status.phase=<Pending | Running>   --all-namespaces
+kubectl config get-context
 ```
 
-### Doing a request from one pod do another
+#### List resources
 
 ```bash
-# You can do curl in the url
-curl http://<service-name>.<namespace>
+# List all resources in a namespace
+kubectl get all # -n <namespace>
+
+#List a resource in all namespaces
+kubectl get <deployment/ingress/hpa etc> -A
 ```
 
-### Copy a secret from one namespace to another
-
-```
- kubectl get secret <secret-name> --namespace <source-namespace>  -o yaml | grep -v '^\s*namespace:\s' |  kubectl apply --namespace=<destination-namespace> -f -
-```
-
-### Start pod from an image
-
-```bash
-kubectl run <pod-name> --image=<image-name> --restart=Never
-```
-
-### Get a pod by selector
-
-```bash
-# --selector=app=my-app
-kubectl get pod --selector=<selector>
-```
-
-### Get image from deployment/pod
+#### Get image from deployment/pod
 
 ```bash
 # Deployment
-kubectl get deployment <deployment-name> --jsonpath='{.spec.template.spec.containers[*].image}'
+kubectl get deployment <deployment> --jsonpath='{.spec.template.spec.containers[*].image}'
+
 # Pod
-kubectl get po --selector=app=<app-name> -o jsonpath='{.items[*].spec.containers[*].image}'
+kubectl get po --selector=app=<app> -o jsonpath='{.items[*].spec.containers[*].image}'
+
 # or 
-kubectl get po <pod-name> -o jsonpath='{.items[*].spec.containers[*].image}'
+kubectl get po <pod> -o jsonpath='{.items[*].spec.containers[*].image}'
 ```
 
+---
+
 **Note**: You can also find a lot of commands in [Kubectl Cheat Sheet](https://kubernetes.io/docs/reference/kubectl/cheatsheet/)
+
+
+### Useful Tools
+
+- [Stern](https://github.com/stern/stern) ⎈ Multi pod and container log tailing for Kubernetes -- Friendly fork of
+- [Krew](https://krew.sigs.k8s.io/) Krew is the plugin manager for kubectl command-line tool.
