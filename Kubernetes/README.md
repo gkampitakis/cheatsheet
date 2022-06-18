@@ -34,6 +34,7 @@
   - List resources
 
 - [Useful Tools](#useful-tools)
+- [Links](#links)
 
 ## Commands
 
@@ -246,3 +247,8 @@ kubectl get po <pod> -o jsonpath='{.items[*].spec.containers[*].image}'
 
 - [Stern](https://github.com/stern/stern) ⎈ Multi pod and container log tailing for Kubernetes -- Friendly fork of
 - [Krew](https://krew.sigs.k8s.io/) Krew is the plugin manager for kubectl command-line tool.
+
+
+### Links
+
+- [Ephemeral containers explained](https://iximiuz.com/en/posts/kubernetes-ephemeral-containers/)
